@@ -1,5 +1,5 @@
 
 import pandas as pd
-import Quandl
+import quandl
 
-df = Quandl.get('WIKI/GOOGL')
+df = quandl.get('WIKI/GOOGL')
