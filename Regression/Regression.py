@@ -8,6 +8,8 @@ from sklearn.linear_model import LinearRegression
 import datetime
 import matplotlib.pyplot as plt
 from matplotlib import style
+import pickle
+import os
 
 style.use('ggplot')
 
@@ -33,25 +35,37 @@ X = np.array(impdf.drop(['label'],1))
 X = preprocessing.scale(X)
 X = X[:-forecastOut]
 type(X)
-
+len(X)
 XLately = X[-forecastOut:]
 
 impdf.dropna(inplace=True)
 y = np.array(impdf['label'])
 type(y)
+len(y)
 # X = X[: -forecastOut + 1]
 # find min length and use that much data
 n = min(len(X), len(y))
 # impdf.dropna(inplace=True)
-y = np.array(impdf['label'])
 
 X_train, X_test, y_train, y_test = cross_validation.train_test_split(X[:n], y[:n], test_size = 0.2)
 
-clf = LinearRegression()
+clf = LinearRegression(n_jobs=-1)
 # switch algo
 # clf = svm.SVR()
 
 clf.fit(X_train, y_train)
+
+#  Save trained classifier in pickle
+
+# cwd = os.getcwd()
+# os.chdir(os.getcwd()+'\\Regression')
+
+with open('LinearRegression.pickle','wb') as f:
+    pickle.dump(clf, f)
+
+#  load trained classifier again
+pickleIn = open('LinearRegression.pickle','rb')
+clf = pickle.load(pickleIn)
 
 accu = clf.score(X_train,y_train)
 
@@ -68,7 +82,9 @@ for i in forecastSet:
     nextUnix += oneDay
     impdf.loc[nextDate] = [np.nan for _ in range(len(impdf.columns)-1)] + [i]
 
+print(forecastSet, accu, forecastOut)
 
+# issue solved
 impdf['Adj. Close'].plot()
 impdf['Forecast'].plot()
 plt.legend(loc=4)
