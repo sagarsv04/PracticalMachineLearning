@@ -69,7 +69,7 @@ def kNNAlgo(data, predict, k=3):
     return voteResult, confidence
 
 
-def PlotData():
+def KNNFromStrach():
     # plotOne = [1,2]
     # plotTwo = [5,7]
     # euclideanDist = sqrt((plotOne[0] - plotTwo[0])**2 + (plotOne[1] - plotTwo[1])**2)
@@ -123,7 +123,7 @@ def PlotData():
 def main():
 
     KNNUsingSKLearn();
-    PlotData();
+    KNNFromStrach();
 
     return 0;
 
