@@ -83,7 +83,7 @@ class SVM():
 
         #  extremely expensive
         bRangeMultiple = 5
-        #  extremely expensive
+        #  we dont need to take as small steps with b as we do with w
         bMultiple = 5
         latestOptimum = self.maxFeatureValue*10
 
@@ -92,16 +92,88 @@ class SVM():
             #  we can do this because convex
             optimized = False
             while not optimized:
-                pass
+                # we are not giving b the same optimizing treatment of big/small step as w
+                for b in np.arange(-1*(self.maxFeatureValue*bRangeMultiple),
+                                    self.maxFeatureValue*bRangeMultiple,
+                                    step*bMultiple):
+                    for transformation in transforms:
+                        wT = w*transformation
+                        foundOption = True
+                        # weakest link in SVM fundamentally
+                        # SMO attempts to fix this a bit
+                        # yi(xi.w+b) >= 1
+                        for i in self.data:
+                            for xi in self.data[i]:
+                                yi = i
+                                if not yi*(np.dot(wT,xi)+b)>=1:
+                                    foundOption = False
+                                    # break
+                        if foundOption:
+                            # magnitude of a vector
+                            optDict[np.linalg.norm(wT)] = [wT,b]
 
-        pass
+                if w[0] < 0:
+                    optimized= True
+                    print('Optimized a step.')
+                else:
+                    w = w - step
+
+            norms = sorted([n for n in optDict])
+            # ||w|| : [w,b]
+            optChoice = optDict[norms[0]]
+            self.w = optChoice[0]
+            self.b = optChoice[1]
+            latestOptimum = optChoice[0][0]+step*2
+
+        return 0;
 
     def predict(self, features):
         # sign(x.w+b)
-        # classification = ???
         classification = np.sign(np.dot(np.array(features), self.w) + self.b)
+        if classification != 0 and self.visualization:
+            self.ax.scatter(features[0], features[1], s=200, marker='*', c=self.colors[classification])
 
         return classification
+
+    def visualize(self):
+        [[self.ax.scatter(x[0],x[1],s=100,color=self.colors[i]) for x in self.data[i]] for i in self.data]
+        # hyperplane = x.w+b
+        # v = x.w+b
+        # psv = 1
+        # nsv = -1
+        # dec = 0
+        def hyperplane(x,w,b,v):
+            return (-w[0]*x-b+v)/w[1]
+
+        datarange = (self.minFeatureValue*0.9,self.maxFeatureValue*1.1)
+        hypXmin = datarange[0]
+        hypXmax = datarange[1]
+
+        # (w.x+b) = 1
+        # positive support vector hyperplane
+        # value of y? given x
+        psv1 = hyperplane(hypXmin, self.w, self.b, 1)
+        psv2 = hyperplane(hypXmax, self.w, self.b, 1)
+        # plot x, y
+        self.ax.plot([hypXmin,hypXmax],[psv1,psv2])
+
+        # (w.x+b) = -1
+        # negative support vector hyperplane
+        # value of y? given x
+        nsv1 = hyperplane(hypXmin, self.w, self.b, -1)
+        nsv2 = hyperplane(hypXmax, self.w, self.b, -1)
+        # plot x, y
+        self.ax.plot([hypXmin,hypXmax],[nsv1,nsv2])
+
+        # (w.x+b) = 0
+        # neutral support vector hyperplane
+        # value of y? given x
+        zsv1 = hyperplane(hypXmin, self.w, self.b, 0)
+        zsv2 = hyperplane(hypXmax, self.w, self.b, 0)
+        # plot x, y
+        self.ax.plot([hypXmin,hypXmax],[zsv1,zsv2])
+
+        plt.show()
 
 def SVMFromStrach():
 
@@ -115,6 +187,11 @@ def SVMFromStrach():
                             [6,-1],
                             [7,3],])}
 
+    svm = SVM()
+    svm.fit(data=dataDict)
+    svm.visualize()
+
+
 
     return 0;
 
@@ -122,7 +199,7 @@ def SVMFromStrach():
 
 def main():
 
-    SVMUsingSKLearn();
+    # SVMUsingSKLearn();
     SVMFromStrach();
 
     return 0;
