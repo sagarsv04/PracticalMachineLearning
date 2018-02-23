@@ -92,6 +92,7 @@ class SVM():
             #  we can do this because convex
             optimized = False
             while not optimized:
+                # we can thread this as we are saving it in a dict
                 # we are not giving b the same optimizing treatment of big/small step as w
                 for b in np.arange(-1*(self.maxFeatureValue*bRangeMultiple),
                                     self.maxFeatureValue*bRangeMultiple,
@@ -182,13 +183,26 @@ def SVMFromStrach():
     # class as key whose values are list of list
     dataDict = {-1:np.array([[1,7],
                             [2,8],
-                            [3,8],]),
+                            [3,8]]),
                 1:np.array([[5,1],
                             [6,-1],
-                            [7,3],])}
+                            [7,3]])}
 
     svm = SVM()
     svm.fit(data=dataDict)
+
+    predictUs = [[0,10],
+                [1,3],
+                [3,4],
+                [3,5],
+                [5,5],
+                [5,6],
+                [6,-5],
+                [5,8]]
+
+    for p in predictUs:
+        svm.predict(p)
+
     svm.visualize()
 
 
