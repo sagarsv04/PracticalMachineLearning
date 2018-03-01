@@ -3,6 +3,7 @@ from matplotlib import style
 import pandas as pd
 import numpy as np
 import os, random
+from sklearn import preprocessing
 from sklearn.cluster import KMeans
 style.use('ggplot')
 
@@ -69,24 +70,46 @@ def ClusterTitanicDataset():
     df.fillna(0, inplace=True)
     #print(df.head())
     df = handle_non_numerical_data(df)
-    print(df.head())
+    # print(df.head())
+
+    X = np.array(df.drop(['survived'], 1).astype(float))
+    # se what preprocessing does to data
+    # X = preprocessing.scale(GetData())
+    X = preprocessing.scale(X)
+
+    y = np.array(df['survived'])
+
+    clf = KMeans(n_clusters=2)
+    clf.fit(X)
+
+    correct = 0
+    for i in range(len(X)):
+        # i = 0
+        predict_me = np.array(X[i].astype(float))
+        predict_me = predict_me.reshape(-1, len(predict_me))
+        prediction = clf.predict(predict_me)
+        if prediction[0] == y[i]:
+            correct += 1
+
+    print(correct/len(X))
 
     return 0
 
 
 def GetData():
 
-    X = np.array([[1, 2],
+    retX = np.array([[1, 2],
                   [1.5, 1.8],
                   [5, 8],
                   [8, 8],
                   [1, 0.6],
                   [9, 11]])
 
-    return X
+    return retX
 
-
-# plt.scatter(X[:, 0],X[:, 1], s=150, linewidths = 5, zorder = 10)
+# retX = GetData()
+# retX = preprocessing.scale(GetData())
+# plt.scatter(retX[:, 0],retX[:, 1], s=150, linewidths = 5, zorder = 10)
 # plt.show()
 
 
@@ -113,6 +136,7 @@ def ClusterUsingSKLearn():
 def main():
 
     # ClusterUsingSKLearn()
+    # 70.8938 %
     ClusterTitanicDataset()
 
     return 0
