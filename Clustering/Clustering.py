@@ -345,7 +345,7 @@ class Mean_Shift(object):
                     weight_index = int(distance/self.radius)
                     if weight_index > self.radius_norm_step-1:
                         weight_index = self.radius_norm_step-1
-
+                    # Squaring the weights time increases with increase in data
                     to_add = (weights[weight_index]**2)*[featureset]
                     in_bandwidth +=to_add
 
