@@ -8,3 +8,7 @@ I made few changes in "init_process()" for ignoring the polarity 2 line being pr
 from "./testdata.manual.2009.06.14.csv" to "./test_set.csv"
 
 In method "shuffle_data()" use " encoding ='latin-1' " if you get utf-8 errors while read_csv() in pandas dataframe
+
+The file "train_test_neural_network.py" consit method "train_neural_network()" which uses lexicon.pickle created in data_preprocessing.py and trains the model
+
+The model is saved as model.ckpt
