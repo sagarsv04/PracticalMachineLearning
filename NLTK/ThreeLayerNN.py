@@ -1,10 +1,10 @@
-from CreateSentimentFeaturesets import create_feature_sets_and_labels
+from create_sentiment_featuresets import create_feature_sets_and_labels
 import tensorflow as tf
 #from tensorflow.examples.tutorials.mnist import input_data
 import pickle
 import numpy as np
 
-train_x,train_y,test_x,test_y = create_feature_sets_and_labels('/path/to/pos.txt','/path/to/neg.txt')
+train_x,train_y,test_x,test_y = create_feature_sets_and_labels('./pos.txt','./neg.txt')
 
 n_nodes_hl1 = 1500
 n_nodes_hl2 = 1500
@@ -20,6 +20,8 @@ y = tf.placeholder('float')
 hidden_1_layer = {'f_fum':n_nodes_hl1,
                   'weight':tf.Variable(tf.random_normal([len(train_x[0]), n_nodes_hl1])),
                   'bias':tf.Variable(tf.random_normal([n_nodes_hl1]))}
+
+# input layer of size len(train_x[0]), train_x[0] as all the elements in train_x is of same length
 
 hidden_2_layer = {'f_fum':n_nodes_hl2,
                   'weight':tf.Variable(tf.random_normal([n_nodes_hl1, n_nodes_hl2])),
