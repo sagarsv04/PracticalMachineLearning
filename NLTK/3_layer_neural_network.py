@@ -6,6 +6,13 @@ import numpy as np
 
 train_x,train_y,test_x,test_y = create_feature_sets_and_labels('./pos.txt','./neg.txt')
 
+'''
+This is just to see the accuracy for our text data set ('pos.txt','neg.txt')
+Using create_feature_sets_and_labels() to create feature sets and respective lables
+
+With MNIST dataset the accuracy was above 90 %
+'''
+
 n_nodes_hl1 = 1500
 n_nodes_hl2 = 1500
 n_nodes_hl3 = 1500
@@ -54,7 +61,7 @@ def neural_network_model(data):
 
 def train_neural_network(x):
 	prediction = neural_network_model(x)
-	cost = tf.reduce_mean( tf.nn.softmax_cross_entropy_with_logits(prediction,y) )
+	cost = tf.reduce_mean( tf.nn.softmax_cross_entropy_with_logits(logits=prediction, labels=y))
 	optimizer = tf.train.AdamOptimizer(learning_rate=0.001).minimize(cost)
 
 	with tf.Session() as sess:
@@ -81,4 +88,10 @@ def train_neural_network(x):
 		print('Accuracy:',accuracy.eval({x:test_x, y:test_y}))
 
 
-train_neural_network(x)
+def main():
+    train_neural_network(x)
+    return 0
+
+
+if __name__ == '__main__':
+    main()

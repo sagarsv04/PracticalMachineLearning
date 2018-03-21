@@ -54,10 +54,6 @@ def init_process(fin,fout):
 				continue;
 	outfile.close()
 
-init_process('./training.1600000.processed.noemoticon.csv','./train_set.csv')
-# creates a "train_set.csv" consisting positive, negative sentences with respective lables
-init_process('./testdata.manual.2009.06.14.csv','./test_set.csv')
-# creates a "test_set.csv" consisting positive, negative sentences with respective lables
 
 def create_lexicon(fin):
 	# fin = "./train_set.csv"
@@ -83,8 +79,6 @@ def create_lexicon(fin):
 	with open('lexicon-2500-2638.pickle','wb') as f:
 		pickle.dump(lexicon,f)
 
-create_lexicon('./train_set.csv')
-# creates a ".pickle" file consisting all the words lexiconed as a list
 
 
 def convert_to_vec(fin,fout,lexicon_pickle):
@@ -128,10 +122,6 @@ def convert_to_vec(fin,fout,lexicon_pickle):
 
 		print(counter)
 
-convert_to_vec('./test_set.csv','./processed-test-set.csv','./lexicon-2500-2638.pickle')
-# create "processed-test-set.csv" consisting feature array of each text with respective lables
-# Note: few features with label of polarity 2 where processed in "processed-test-set.csv"
-# This was due to "test_set.csv" consisting polarity 2, Handled in "init_process()"
 
 def shuffle_data(fin):
 	'''
@@ -144,7 +134,6 @@ def shuffle_data(fin):
 	print(df.head())
 	df.to_csv('./train_set_shuffled.csv', index=False)
 
-shuffle_data('./train_set.csv')
 
 
 def create_test_data_pickle(fin):
@@ -171,4 +160,29 @@ def create_test_data_pickle(fin):
 	feature_sets = np.array(feature_sets)
 	labels = np.array(labels)
 
-create_test_data_pickle('./processed-test-set.csv')
+
+
+def main():
+
+	init_process('./training.1600000.processed.noemoticon.csv','./train_set.csv')
+	# creates a "train_set.csv" consisting positive, negative sentences with respective lables
+	init_process('./testdata.manual.2009.06.14.csv','./test_set.csv')
+	# creates a "test_set.csv" consisting positive, negative sentences with respective lables
+
+	create_lexicon('./train_set.csv')
+	# creates a ".pickle" file consisting all the words lexiconed as a list
+
+	convert_to_vec('./test_set.csv','./processed-test-set.csv','./lexicon-2500-2638.pickle')
+	# create "processed-test-set.csv" consisting feature array of each text with respective lables
+	# Note: few features with label of polarity 2 where processed in "processed-test-set.csv"
+	# This was due to "test_set.csv" consisting polarity 2, Handled in "init_process()"
+
+	shuffle_data('./train_set.csv')
+
+    create_test_data_pickle('./processed-test-set.csv')
+
+    return 0
+
+
+if __name__ == '__main__':
+    main()
