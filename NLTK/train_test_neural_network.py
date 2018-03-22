@@ -107,6 +107,12 @@ def train_neural_network(x):
 
 
 def test_neural_network():
+
+    '''
+    This method takes the csv file consisting arrays of features and respective labels and
+    divide it to test_x, test_y
+    It then passes the test_x to the model and evaluates the accuracy of model
+    '''
     prediction = neural_network_model(x)
     with tf.Session() as sess:
         sess.run(tf.initialize_all_variables())
