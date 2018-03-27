@@ -15,9 +15,10 @@ Latest NVIDIA drivers.
 CUDA Toolkit 9.0
 cuDNN V7.0.5 for CUDA 9.0
 
-On CPU the code runs fine. 
+On CPU the code runs fine.
 
 Although im having trouble running on GPU.
+I tried to reduce batch_size but the gpu ram usage were always full.
 
 Error:
     Allocator (GPU_0_bfc) ran out of memory trying to allocate 957.03MiB

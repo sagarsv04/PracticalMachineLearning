@@ -11,7 +11,7 @@ With MNIST dataset the accuracy is above 97 %
 
 
 n_classes = 10
-batch_size = 128
+batch_size = 2048
 
 x = tf.placeholder('float', [None, 784])
 y = tf.placeholder('float')
