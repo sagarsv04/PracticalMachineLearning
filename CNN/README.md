@@ -15,6 +15,9 @@ Latest NVIDIA drivers.
 CUDA Toolkit 9.0
 cuDNN V7.0.5 for CUDA 9.0
 
+On CPU the code runs fine. 
+
+Although im having trouble running on GPU.
 
 Error:
     Allocator (GPU_0_bfc) ran out of memory trying to allocate 957.03MiB
