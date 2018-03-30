@@ -102,8 +102,12 @@ ENV/
 
 mnist/
 
-Ignore/
-
+ignore/
 log/
-
 data/
+checkpoint
+*.png
+*.jpg
+*.npy
+*.meta
+*.index

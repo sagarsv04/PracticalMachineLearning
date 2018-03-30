@@ -8,17 +8,19 @@ import numpy as np         # dealing with arrays
 import os                  # dealing with directories
 from random import shuffle # mixing up or currently ordered data that might lead our network astray in training.
 from tqdm import tqdm      # a nice pretty percentage bar for tasks. Thanks to viewer Daniel BA1/4hler for this suggestion
+import matplotlib.pyplot as plt
+
 
 # os.getcwd()
 train_dir = './data/train/'
 test_dir = './data/test/'
-img_size = 50
+img_size = 128
 learning_rate = 1e-3
-model_name = 'dogsvscats-{}-{}.model'.format(learning_rate, '2conv-basic') # just so we remember which saved model is which, sizes must match
+model_name = 'dogsvscats-{}-{}.model'.format(learning_rate, '6conv-basic') # just so we remember which saved model is which, sizes must match
 
-save_training_data = 0
-save_testing_data = 0
-save_model = 0
+save_training_data = 1
+save_testing_data = 1
+save_model = 1
 
 
 def label_img(img_name):
@@ -38,6 +40,14 @@ def create_train_data():
     '''
     Create list of train data consisting grayscale features of image in an array and respective label.
     '''
+
+    if os.path.exists('./train_data.npy'):
+        print('Loading saved train data')
+        training_data = np.load('./train_data.npy')
+        return training_data
+    else:
+        print('No saved train data')
+
     training_data = []
     for img in tqdm(os.listdir(train_dir)):
         # img = os.listdir(train_dir)[0]
@@ -61,6 +71,14 @@ def process_test_data():
     '''
     Create list of test data consisting grayscale features of image in an array.
     '''
+
+    if os.path.exists('./test_data.npy'):
+        print('Loading saved test data')
+        training_data = np.load('./test_data.npy')
+        return training_data
+    else:
+        print('No saved test data')
+
     testing_data = []
     for img in tqdm(os.listdir(test_dir)):
         path = os.path.join(test_dir,img)
@@ -115,13 +133,13 @@ def get_convnet():
 
     return convnet
 
-def run_classification():
+def train_model(train_data):
 
     convnet = get_convnet()
 
     model = load_model(convnet)
 
-    train_data = create_train_data()
+    # train_data = create_train_data()
 
     train = train_data[:-500]
     test = train_data[-500:]
@@ -138,13 +156,75 @@ def run_classification():
     if save_model:
         model.save('./'+model_name)
 
+    return model
+
+
+def predict_from_model(model, data, label=False):
+
+    model_out = model.predict([data])[0]
+
+    str_label = ''
+    if np.argmax(model_out) == 1:
+        str_label='Dog'
+    else:
+        str_label='Cat'
+
+    if label:
+        return str_label
+
+    return model_out
+
+
+def predict_test_data(model, test_data):
+
+    fig=plt.figure()
+
+    for num,data in enumerate(test_data[:12]):
+        # cat: [1,0]
+        # dog: [0,1]
+
+        img_num = data[1]
+        img_data = data[0]
+
+        y = fig.add_subplot(3,4,num+1)
+        orig = img_data
+        data = img_data.reshape(img_size,img_size,1)
+        #model_out = model.predict([data])[0]
+        str_label = predict_from_model(model, data, True)
+
+        y.imshow(orig,cmap='gray')
+        plt.title(str_label)
+        y.axes.get_xaxis().set_visible(False)
+        y.axes.get_yaxis().set_visible(False)
+    plt.show()
+
+    return 0
+
+def submit_prediction(model, test_data):
+
+    with open('./submission_file.csv','a') as f:
+        for data in tqdm(test_data):
+            img_num = data[1]
+            img_data = data[0]
+            orig = img_data
+            data = img_data.reshape(img_size,img_size,1)
+            # model_out = model.predict([data])[0]
+            model_out = predict_from_model(model, data)
+            f.write('{},{}\n'.format(img_num,model_out[1]))
+
     return 0
 
 
 def main():
 
-    run_classification()
-    # train_data = create_train_data()
+    train_data = create_train_data()
+    model = train_model(train_data)
+
+    test_data = process_test_data()
+
+    predict_test_data(model, test_data)
+
+    submit_prediction(model, test_data)
 
     return 0
 
