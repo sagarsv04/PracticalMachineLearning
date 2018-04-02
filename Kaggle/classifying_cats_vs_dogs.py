@@ -203,6 +203,7 @@ def predict_test_data(model, test_data):
 def submit_prediction(model, test_data):
 
     with open('./submission_file.csv','a') as f:
+        f.write('id,label\n')
         for data in tqdm(test_data):
             img_num = data[1]
             img_data = data[0]
