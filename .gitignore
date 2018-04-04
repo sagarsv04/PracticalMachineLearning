@@ -111,3 +111,7 @@ checkpoint
 *.npy
 *.meta
 *.index
+
+Kaggle/*.csv
+Kaggle/*001
+sample_images/
